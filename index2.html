@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CreatorHub · Global Influencer Index</title>
+  <!-- Font Awesome 6.5.1 (最新版) 包含正确的 X 图标 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f6fb;
+      color: #1a1e2b;
+      line-height: 1.5;
+    }
+
+    /* modern navigation / header */
+    .header {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .logo-icon {
+      background: #2b2d42;
+      color: white;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 8px 16px -6px rgba(0,32,64,0.2);
+    }
+
+    .logo-text h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #0b1c2f;
+      line-height: 1.2;
+    }
+
+    .logo-text span {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #4a5568;
+      background: #e9eef3;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
+      display: inline-block;
+      margin-top: 2px;
+    }
+
+    .search-wrapper {
+      display: flex;
+      gap: 0.5rem;
+      background: white;
+      padding: 0.3rem 0.3rem 0.3rem 1rem;
+      border-radius: 60px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      border: 1px solid #e2e8f0;
+      align-items: center;
+    }
+
+    .search-wrapper i {
+      color: #7f8c9f;
+    }
+
+    #searchInput {
+      border: none;
+      padding: 0.6rem 0.2rem;
+      font-size: 1rem;
+      min-width: 220px;
+      outline: none;
+      background: transparent;
+    }
+
+    #searchBtn {
+      background: #2b2d42;
+      border: none;
+      color: white;
+      padding: 0.6rem 1.5rem;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #2b2d42;
+    }
+
+    #searchBtn:hover {
+      background: #1e1f2f;
+      transform: scale(0.98);
+    }
+
+    /* filter chips */
+    .filter-section {
+      padding: 1.2rem 2rem 0.5rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem 1.2rem;
+      align-items: center;
+    }
+
+    .filter-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #334155;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .chip-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip {
+      background: white;
+      border: 1px solid #dce3ec;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #1f2a41;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip i {
+      font-size: 0.8rem;
+      color: #617388;
+    }
+
+    .chip.active {
+      background: #2b2d42;
+      border-color: #2b2d42;
+      color: white;
+    }
+
+    .chip.active i {
+      color: white;
+    }
+
+    .chip:hover {
+      background: #eef2f7;
+    }
+
+    /* main grid */
+    .container {
+      max-width: 1400px;
+      margin: 1.5rem auto;
+      padding: 0 2rem 3rem;
+    }
+
+    .influencer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.8rem;
+    }
+
+    /* card design */
+    .card {
+      background: white;
+      border-radius: 28px;
+      box-shadow: 0 15px 30px -12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: all 0.25s ease;
+      border: 1px solid rgba(255,255,255,0.5);
+      backdrop-filter: blur(2px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 25px 40px -14px rgba(0,32,64,0.2);
+    }
+
+    .card-img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      background: #d9e2ef;
+      display: block;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .card-content {
+      padding: 1.5rem 1.3rem 1.3rem;
+      flex: 1;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+
+    .creator-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+    }
+
+    .country-badge {
+      background: #f0f4fa;
+      border-radius: 30px;
+      padding: 0.2rem 0.8rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #2d4059;
+      border: 1px solid #dbecff;
+    }
+
+    .creator-handle {
+      color: #4f6f8f;
+      font-weight: 500;
+      font-size: 0.9rem;
+      margin: 0.2rem 0 0.8rem 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .creator-handle i {
+      font-size: 0.8rem;
+      color: #1da1f2; 
+    }
+
+    .creator-bio {
+      font-size: 0.94rem;
+      color: #1f2a3f;
+      margin: 0.7rem 0 1rem;
+      line-height: 1.5;
+      opacity: 0.8;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .stats {
+      display: flex;
+      gap: 1.2rem;
+      margin: 0.9rem 0 1.2rem;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #0f263b;
+    }
+
+    .stat-item i {
+      color: #7b8ba3;
+      font-size: 0.9rem;
+    }
+
+    .niche-tag {
+      display: inline-block;
+      background: #e6edf6;
+      padding: 0.3rem 1rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: #253c5c;
+      border: 1px solid #cbd6e4;
+    }
+
+    .card-footer {
+      margin-top: auto;
+      border-top: 1px solid #eef3f8;
+      padding: 1rem 1.3rem 1rem;
+      background: #fafcff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .social-links a {
+      color: #435e7a;
+      margin-right: 0.8rem;
+      font-size: 1.1rem;
+      transition: color 0.15s;
+      text-decoration: none;
+    }
+
+    .social-links a:hover {
+      color: #121f33;
+    }
+
+    .action-btn {
+      background: none;
+      border: 1px solid #cbdae9;
+      padding: 0.3rem 1rem;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #1d344b;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .action-btn:hover {
+      background: #2b2d42;
+      border-color: #2b2d42;
+      color: white;
+    }
+
+    /* empty state */
+    .no-results {
+      grid-column: 1 / -1;
+      background: white;
+      border-radius: 40px;
+      padding: 3rem;
+      text-align: center;
+      color: #5b6f89;
+      font-size: 1.2rem;
+      border: 2px dashed #cbd6e6;
+    }
+
+    .no-results i {
+      font-size: 3rem;
+      opacity: 0.5;
+      margin-bottom: 1rem;
+    }
+
+    /* footer */
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: #5f6e88;
+      font-size: 0.9rem;
+      border-top: 1px solid #e2eaf2;
+      background: #ffffffd3;
+      backdrop-filter: blur(4px);
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #d7e1ec;
+      margin: 0.5rem 0 1.5rem;
+    }
+
+    /* ========== MODAL STYLES ========== */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.2s ease, visibility 0.2s;
+    }
+
+    .modal-overlay.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .modal-card {
+      background: white;
+      max-width: 500px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border-radius: 40px;
+      box-shadow: 0 40px 70px -10px #0f2a41;
+      padding: 2rem 2rem 1.8rem;
+      position: relative;
+      animation: modalPop 0.3s;
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #6b7f98;
+      line-height: 1;
+      padding: 0 0.5rem;
+    }
+
+    .modal-close:hover {
+      color: #1f2a41;
+    }
+
+    .modal-header {
+      display: flex;
+      gap: 1.2rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 30px;
+      object-fit: cover;
+      background: #d0ddee;
+      border: 3px solid white;
+      box-shadow: 0 8px 18px -6px #082032;
+    }
+
+    .modal-name h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .modal-handle {
+      color: #1f5f8e;
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .modal-detail-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      background: #f0f5fe;
+      padding: 1rem 1.4rem;
+      border-radius: 26px;
+      margin: 1.5rem 0 1.8rem;
+    }
+
+    .modal-detail-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .modal-detail-item i {
+      font-size: 1.2rem;
+      color: #2b2d42;
+      width: 24px;
+    }
+
+    .modal-bio-full {
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: #17212b;
+      margin: 1rem 0 2rem;
+      padding: 0 0.2rem;
+    }
+
+    .modal-socials {
+      display: flex;
+      gap: 1.5rem;
+      margin: 1.8rem 0 1.5rem;
+    }
+
+    .modal-socials a {
+      background: #eef3f9;
+      width: 48px;
+      height: 48px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #2b3f59;
+      font-size: 1.5rem;
+      transition: 0.15s;
+      border: 1px solid #ceddec;
+      text-decoration: none;
+    }
+
+    .modal-socials a:hover {
+      background: #2b2d42;
+      color: white;
+      border-color: #2b2d42;
+    }
+
+    .modal-footer-note {
+      color: #5d748d;
+      border-top: 1px solid #dee9f2;
+      padding-top: 1.2rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- header with logo & search -->
+  <header class="header">
+    <div class="logo-area">
+      <div class="logo-icon"><i class="fas fa-globe"></i></div>
+      <div class="logo-text">
+        <h1>CreatorHub</h1>
+        <span>global influencer index</span>
+      </div>
+    </div>
+
+    <div class="search-wrapper">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search by name, handle or niche..." aria-label="Search creators">
+      <button id="searchBtn"><i class="fas fa-arrow-right"></i> Go</button>
+    </div>
+  </header>
+
+  <!-- category / niche filters (functional chips) -->
+  <div class="filter-section">
+    <span class="filter-label"><i class="fas fa-filter" style="margin-right: 4px;"></i> FILTER BY</span>
+    <div class="chip-filter" id="filterChips">
+      <div class="chip active" data-filter="all"><i class="fas fa-grid-2"></i> All</div>
+      <div class="chip" data-filter="tech"><i class="fas fa-microchip"></i> Tech</div>
+      <div class="chip" data-filter="beauty"><i class="fas fa-paint-brush"></i> Beauty</div>
+      <div class="chip" data-filter="gaming"><i class="fas fa-gamepad"></i> Gaming</div>
+      <div class="chip" data-filter="lifestyle"><i class="fas fa-camera-retro"></i> Lifestyle</div>
+      <div class="chip" data-filter="fashion"><i class="fas fa-shirt"></i> Fashion</div>
+      <div class="chip" data-filter="fitness"><i class="fas fa-dumbbell"></i> Fitness</div>
+      <div class="chip" data-filter="food"><i class="fas fa-utensils"></i> Food</div>
+    </div>
+  </div>
+
+  <!-- main grid (dynamic cards) -->
+  <main class="container">
+    <div class="influencer-grid" id="creatorGrid"></div>
+  </main>
+
+  <!-- footer -->
+  <footer class="footer">
+    <i class="fas fa-compass" style="margin-right: 6px;"></i> CreatorHub · discover authentic voices <br> <span style="opacity:0.5;">© 2025 · global creator index — all data for demo</span>
+  </footer>
+
+  <!-- MODAL overlay (hidden by default) -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-card" id="modalContent">
+      <!-- dynamic content will be injected via js -->
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // ---------- MOCK DATABASE WITH MIXED SOCIAL LINKS ----------
+      const creators = [
+        {
+          id: 1,
+          name: "Jarrod'sTech",
+          handle: "JarrodsTech",
+          avatar: "https://pbs.twimg.com/profile_images/1477393619971493889/XW5ZXepd.jpg",
+          country: "AU",
+          bio: "I make gaming laptop reviews & comparisons to help you pick the right tech!",
+          niche: "tech",
+          followers: "792k",
+          engagement: "2.41%",
+          social: {
+            youtube: "https://www.youtube.com/@JarrodsTech",
+            x: "https://x.com/JarrodsTech"
+          }
+        },
+        {
+          id: 2,
+          name: "Vanessa Nicole Stern",
+          handle: "vanessanicolestern",
+          avatar: "https://yt3.googleusercontent.com/8l6ALXTvoPz4cjuebtDaAfwIN4SPwE2l0lGTpdg0FEjoJhNkzpQZ75_LRmMgUN1eNAxusfsFPg=s900-c-k-c0x00ffffff-no-rj",
+          country: "CA",
+          bio: "Makeup and things taylor.pinkowski@thedigitalbrandarchitects.com",
+          niche: "beauty",
+          followers: "386.5K",
+          engagement: "1.99%",
+          social: {
+            youtube: "https://youtube.com/@vanessanicolestern",
+            instagram: "https://www.instagram.com/vanessanicolestern",
+            tiktok: "https://tiktok.com/@vanessanicolestern"
+          }
+        },
+        {
+          id: 3,
+          name: "MeEnyu",
+          handle: "MeEnyu",
+          avatar: "https://yt3.googleusercontent.com/iMF-JRCkcEBMTMg5OvAcXBeI1nuJMFlvLUc1FeeqA6i03RuiHlRl3KoDXqNKjVt2Fi7W76u9Tw=s900-c-k-c0x00ffffff-no-rj",
+          country: "CA",
+          bio: "YouTuber known for Roblox Gaming.",
+          niche: "gaming",
+          followers: "4.04M",
+          engagement: "2.20%",
+          social: {
+            youtube: "https://youtube.com/@MeEnyu",
+            instagram: "https://www.instagram.com/enyuzee/?hl=en"
+          }
+        },
+        {
+          id: 4,
+          name: "RayDu阿滴",
+          handle: "rayduenglish",
+          avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnCTgiVqhsC9aNxcgag8lGbvIuRErq1q01iKvr348FnJjz6RviE0ANqTdp7YbrYSkS9c7izDBatP7IttX-ounLqSBit6gMrkCZY2xaOJQ",
+          country: "TW",
+          bio: "加入會員收聽Podcast，每隔週五更新!",
+          niche: "lifestyle",
+          followers: "2.9M",
+          engagement: "4.25%",
+          social: {
+            youtube: "https://www.youtube.com/channel/UCeo3JwE3HezUWFdVcehQk9Q",
+            instagram: "https://www.instagram.com/rayduenglish/?hl=en",
+          }
+        },
+        {
+          id: 5,
+          name: "Jeff Nippard",
+          handle: "JeffNippard",
+          avatar: "https://yt3.googleusercontent.com/ytc/AIdro_k3d_sCJXZcQk5KQTlFzdGMIJwJpZ9g2W07Z616E5DENGI=s900-c-k-c0x00ffffff-no-rj",
+          country: "CA",
+          bio: "Hello everyone! I'm a Canadian natural bodybuilder and powerlifter with a BSc in biochemistry and a passion for science. I've been training for 20 years. I hope you enjoy my videos!",
+          niche: "fitness",
+          followers: "8.19M",
+          engagement: "3.505%",
+          social: {
+            youtube: "https://www.youtube.com/jeffnippard",
+            instagram: "https://www.instagram.com/JeffNippard",
+          }
+        },
+        {
+          id: 6,
+          name: "Nigel Ng",
+          handle: "mrnigelng",
+          avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRvJSxNPT4GPWUtYP56IJLGbLTzINwc0QFA0jSqy1fyflSiGq1Ud6ashK3cCRAozBChCQq38cdGe_AwzqnKQGlITptHWPHxOAqLtmHivg&s=10",
+          country: "US",
+          bio: "Not a chef, I just complain.",
+          niche: "food",
+          followers: "10.6M",
+          engagement: "3.485%",
+          social: {
+            youtube: "https://youtube.com/@mrnigelng",
+            instagram: "https://instagram.com/mrnigelng",
+            tiktok: "https://tiktok.com/@mrnigelng"
+          }
+        },
+        {
+          id: 7,
+          name: "Sofea Shra",
+          handle: "sfeashraa",
+          avatar: "data:image/jpeg;base64,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",
+          country: "MY",
+          bio: "Eid Just Got Better 2026",
+          niche: "fashion",
+          followers: "956.7K",
+          engagement: "2.53%",
+          social: {
+            tiktok: "https://www.tiktok.com/@sfeashraa?lang=en",
+            instagram: "https://www.instagram.com/sofeashra/?hl=en",
+          }
+        },
+        {
+          id: 8,
+          name: "Insert Richie",
+          handle: "insertrichie",
+          avatar: "https://img1.wsimg.com/isteam/ip/f86c0935-9151-48ae-bf02-e7faf746fc31/INSERT%20RICHIE.png/:/cr=t:0%25,l:0%25,w:100%25,h:100%25",
+          country: "US",
+          bio: "He started posting videos on his TikTok account in November 2020. In his first video, he performed a comedic dance routine around a Sony PlayStation 5 box.",
+          niche: "tech",
+          followers: "6.8M",
+          engagement: "5.05%",
+          social: {
+            tiktok: "https://www.tiktok.com/@insertrichie",
+            youtube: "https://www.youtube.com/@insertrichie",
+            instagram: "https://www.instagram.com/insertrichie"
+          }
+        },
+        {
+          id: 9,
+          name: "Adison Justis",
+          handle: "adisonjustis",
+          avatar: "https://bookingagentinfo.com/wp-content/uploads/2021/09/Adison-Justis.jpg",
+          country: "US",
+          bio: "beauty + girlhood 💋",
+          niche: "beauty",
+          followers: "1.1M",
+          engagement: "0.43%",
+          social: {
+            tiktok: "https://tiktok.com/@adisonjustis",
+            instagram: "https://instagram.com/adisonjustis"
+          }
+        },
+        {
+          id: 10,
+          name: "Jynxzi",
+          handle: "Jynxzi",
+          avatar: "https://i.namu.wiki/i/SvfM2OjELzjYl6xLwThDM1FYaSfDpK-fcjGY4tchgdK0wloBLPItz0VhXQdxovPDryv4OjtdcA5MkdkaEIj7HA.webp",
+          country: "US",
+          bio: "BUSINESS EMAIL: jynxzi@rightclick.gg",
+          niche: "gaming",
+          followers: "9M",
+          engagement: "2.095%",
+          social: {
+            twitch: "https://twitch.tv/jynxzi",
+            youtube: "https://youtube.com/@jynxzi",
+            x: "https://twitter.com/jynxzi"
+          }
+        },
+        {
+          id: 11,
+          name: "Nick DiGiovanni",
+          handle: "NickDiGiovanni",
+          avatar: "https://static.wikia.nocookie.net/uncle-roger/images/d/d2/Nick_DiGiovanni.jpg/revision/latest?cb=20220316161611",
+          country: "US",
+          bio: "Subscribe before everyone else",
+          niche: "food",
+          followers: "33.6M",
+          engagement: "1.955%",
+          social: {
+            youtube: "https://youtube.com/@nickdigiovanni",
+            tiktok: "https://tiktok.com/@nickdigiovanni",
+            instagram: "https://instagram.com/nickdigiovanni"
+          }
+        },
+        {
+          id: 12,
+          name: "營養健身葛格Peeta",
+          handle: "peetagege",
+          avatar: "https://yt3.googleusercontent.com/SjkOovXnF_B9sZNAJ-DTOg3FsHx9lA0gTrSHvwJ_f_Hfz5MBNvajKMoSbsa4Jp0o5nX3DYw8vw=s900-c-k-c0x00ffffff-no-rj",
+          country: "TW",
+          bio: "大家好這邊是Peeta葛格 祝福各位有美好的一天。來學習一下正確的運動營養以及健身知識吧，寫些。",
+          niche: "fitness",
+          followers: "764K",
+          engagement: "2.09%",
+          social: {
+            youtube: "https://www.youtube.com/channel/UCSSjn1X6yMBC3AyJ2azeG7A",
+            instagram: "https://www.instagram.com/peeta.gege/?hl=en"
+          }
+        }
+      ];
+
+      // ----- DOM elements -----
+      const grid = document.getElementById('creatorGrid');
+      const searchInput = document.getElementById('searchInput');
+      const searchBtn = document.getElementById('searchBtn');
+      const filterChips = document.querySelectorAll('.chip[data-filter]');
+      const modalOverlay = document.getElementById('modalOverlay');
+      const modalContent = document.getElementById('modalContent');
+      
+      let activeFilter = 'all';
+      let searchQuery = '';
+
+      // ----- helper: render cards with working social links -----
+      function renderGrid() {
+        const filtered = creators.filter(creator => {
+          if (activeFilter !== 'all' && creator.niche !== activeFilter) return false;
+          
+          if (searchQuery.trim() !== '') {
+            const q = searchQuery.trim().toLowerCase();
+            return creator.name.toLowerCase().includes(q) ||
+                   creator.handle.toLowerCase().includes(q) ||
+                   creator.niche.toLowerCase().includes(q) ||
+                   creator.bio.toLowerCase().includes(q);
+          }
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `<div class="no-results"><i class="fas fa-binoculars"></i><br />No creators match your criteria. Try adjusting the filter or search.</div>`;
+          return;
+        }
+
+        let cardsHTML = '';
+        filtered.forEach(c => {
+          // build social icons with REAL links - 使用 fa-brands 类名
+          let socialIcons = '';
+          if (c.social.youtube) socialIcons += `<a href="${c.social.youtube}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>`;
+          if (c.social.instagram) socialIcons += `<a href="${c.social.instagram}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>`;
+          if (c.social.x) socialIcons += `<a href="${c.social.x}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>`;  // 正确的 X 图标
+          if (c.social.tiktok) socialIcons += `<a href="${c.social.tiktok}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>`;
+          if (c.social.twitch) socialIcons += `<a href="${c.social.twitch}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-twitch"></i></a>`;
+          if (c.social.pinterest) socialIcons += `<a href="${c.social.pinterest}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-pinterest"></i></a>`;
+
+          cardsHTML += `
+            <div class="card" data-id="${c.id}">
+              <img class="card-img" src="${c.avatar}" alt="${c.name}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x400?text=Creator'">
+              <div class="card-content">
+                <div class="card-header">
+                  <span class="creator-name">${c.name}</span>
+                  <span class="country-badge">${c.country}</span>
+                </div>
+                <div class="creator-handle"><i class="fas fa-at"></i> ${c.handle}</div>
+                <div class="creator-bio">${c.bio}</div>
+                <div class="stats">
+                  <span class="stat-item"><i class="fas fa-users"></i> ${c.followers}</span>
+                  <span class="stat-item"><i class="fas fa-chart-line"></i> ${c.engagement}</span>
+                </div>
+                <span class="niche-tag"><i class="fas fa-tag"></i> ${c.niche}</span>
+              </div>
+              <div class="card-footer">
+                <div class="social-links">${socialIcons}</div>
+                <button class="action-btn view-btn" data-id="${c.id}"><i class="fas fa-chevron-right"></i> view</button>
+              </div>
+            </div>
+          `;
+        });
+        grid.innerHTML = cardsHTML;
+
+        // attach view button events
+        document.querySelectorAll('.view-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = parseInt(btn.getAttribute('data-id'));
+            const creator = creators.find(c => c.id === id);
+            if (creator) showModal(creator);
+          });
+        });
+      }
+
+      // ----- MODAL function with working social links -----
+      function showModal(c) {
+        // build social links with REAL URLs - 使用 fa-brands 类名
+        let socialLinksHtml = '';
+        if (c.social.youtube) socialLinksHtml += `<a href="${c.social.youtube}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-youtube"></i></a>`;
+        if (c.social.instagram) socialLinksHtml += `<a href="${c.social.instagram}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-instagram"></i></a>`;
+        if (c.social.x) socialLinksHtml += `<a href="${c.social.x}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-x-twitter"></i></a>`;  // 正确的 X 图标
+        if (c.social.tiktok) socialLinksHtml += `<a href="${c.social.tiktok}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i></a>`;
+        if (c.social.twitch) socialLinksHtml += `<a href="${c.social.twitch}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-twitch"></i></a>`;
+        if (c.social.pinterest) socialLinksHtml += `<a href="${c.social.pinterest}" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-pinterest"></i></a>`;
+        
+        if (socialLinksHtml === '') socialLinksHtml = '<span style="opacity:0.5;">no public links</span>';
+
+        const modalHtml = `
+          <button class="modal-close" id="closeModalBtn">&times;</button>
+          <div class="modal-header">
+            <img class="modal-avatar" src="${c.avatar}" alt="${c.name}" onerror="this.src='https://via.placeholder.com/200?text=Creator'">
+            <div class="modal-name">
+              <h2>${c.name}</h2>
+              <div class="modal-handle"><i class="fas fa-at"></i> ${c.handle}</div>
+            </div>
+          </div>
+
+          <div class="modal-detail-row">
+            <div class="modal-detail-item"><i class="fas fa-globe"></i> ${c.country}</div>
+            <div class="modal-detail-item"><i class="fas fa-tag"></i> ${c.niche}</div>
+            <div class="modal-detail-item"><i class="fas fa-users"></i> ${c.followers} followers</div>
+            <div class="modal-detail-item"><i class="fas fa-chart-line"></i> ${c.engagement} eng.</div>
+          </div>
+
+          <div class="modal-bio-full"><strong>Bio</strong><br>${c.bio}</div>
+
+          <div class="modal-socials">
+            ${socialLinksHtml}
+          </div>
+          <div class="modal-footer-note">
+            <i class="fas fa-check-circle" style="color: #2b2d42;"></i> verified CreatorHub profile · view count representative
+          </div>
+        `;
+
+        modalContent.innerHTML = modalHtml;
+        modalOverlay.classList.add('active');
+
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+          modalOverlay.classList.remove('active');
+        });
+
+        modalOverlay.addEventListener('click', function outsideClick(e) {
+          if (e.target === modalOverlay) {
+            modalOverlay.classList.remove('active');
+          }
+        });
+      }
+
+      // ----- update active chip UI -----
+      function setActiveChip(filterValue) {
+        filterChips.forEach(chip => {
+          const chipFilter = chip.getAttribute('data-filter');
+          if (chipFilter === filterValue) {
+            chip.classList.add('active');
+          } else {
+            chip.classList.remove('active');
+          }
+        });
+      }
+
+      // ----- chip click listeners -----
+      filterChips.forEach(chip => {
+        chip.addEventListener('click', (e) => {
+          const filterValue = chip.getAttribute('data-filter');
+          activeFilter = filterValue;
+          setActiveChip(filterValue);
+          renderGrid();
+        });
+      });
+
+      // ----- search function -----
+      function performSearch() {
+        searchQuery = searchInput.value;
+        renderGrid();
+      }
+
+      searchBtn.addEventListener('click', performSearch);
+      searchInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') performSearch();
+      });
+
+      // initialize
+      renderGrid();
+
+      // ESC key to close modal
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+          modalOverlay.classList.remove('active');
+        }
+      });
+
+    })();
+  </script>
+  <noscript>Please enable JavaScript to experience CreatorHub.</noscript>
+</body>
+</html>
